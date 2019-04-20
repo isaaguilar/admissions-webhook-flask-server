@@ -1,1 +1,1 @@
-from app.validating_apis import namespaces, pods
+from app.validating_apis import namespaces, pods, podtemplates

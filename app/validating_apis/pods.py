@@ -12,11 +12,9 @@ def pod_readiness():
     data = request.json  # K8s spec sent in url body by admission controller
     try:
         container_specs = data["request"]["object"]["spec"]["containers"]
-        for spec in container_specs:
-            if spec.get("readinessProbe") is None:
-                allowed = False
-            if not allowed:
-                result = "Pod spec requires a readiness probe"
+        if not validate_pod_readiness(container_specs):
+            allowed = False
+            result = "Pod spec requires a readiness probe"
     except Exception as e:
         allowed = False
         result = str(e)
@@ -29,3 +27,10 @@ def pod_readiness():
             }
         }
     })
+
+def validate_pod_readiness(container_specs):
+    for spec in container_specs:
+        if spec.get("readinessProbe") is None:
+            return False
+    return True
+        
